@@ -2,8 +2,169 @@
 <html>
 <head>
 	<title>vue-dem</title>
+	<style>
+	   *{padding:0;margin: 0;list-style: none;}
+	   .clear{
+		   zoom: 1;
+	   }
+	   .clear{
+		   height: 0;
+		   display: block;
+		   content: '';
+		   overflow: hidden;
+		   clear: both;
+	   }
+       .box{
+		   width:600px;
+		   overflow: hidden;
+		   margin: 50px auto;
+		   border-radius: 8px;
+		   padding: 20px;
+		   box-sizing: border-box;
+		   box-shadow: 0 0 10px #e5e5e5;
+	   }
+	   .box .input_box{
+		   width: 100%;
+		   height: 40px;
+		   border: 1px solid ;
+		   border-radius: 8px;
+		   margin-top: 20px;
+		   margin-bottom: 20px;
+	   }
+	   .box .input_box input{
+		   width: 85%;
+		   height: 100%;
+		   border:none;
+		   outline: none;
+		   float: left;
+		   padding-left: 10px;
+		   box-sizing: border-box;
+	   }
+	   .box .input_box .send{
+		   width: 10%;
+		   height: 30px;
+		   float: right;
+		   border-radius: 8px;
+		   line-height: 30px;
+		   color: #fff;
+		   text-align: center;
+		   background-color: blue;
+		   margin-top: 5px;
+		   cursor: pointer;
+	   }
+
+	   .list_box{
+             width: 100%;
+			 overflow: hidden;
+	   }
+	   .list_box ul li{
+		   height: 40px;
+		   border-bottom:1px solid #999; 
+		   margin-bottom: 10px;
+		   padding-bottom: 10px;
+	   }
+	   .list_box ul li input{
+		   float: left;
+		   width: 10%;
+		   margin-top: 16px;
+		   outline: none;
+	   }
+	   .list_box ul li p{
+            width: 70%;
+			height: 100%;
+			float: left;
+			line-height: 40px;
+			padding-left: 10px;
+			box-sizing: border-box;
+			color: #333;
+	   }
+	   .list_box ul li .del{
+		   width: 15%;
+		   height: 30px;
+		   background: red;
+		   color: #fff;
+		   border-radius: 8px;
+		   text-align: center;
+		   line-height: 30px;
+		   float:right;
+           cursor: pointer;
+		   margin-top: 5px;
+	   }
+	   .list_box ul li .active{
+		   text-decoration: line-through;
+		   color: #999;
+	   }
+	   .hint_text{
+		   text-align: center;
+		   color: #e5e5e5; 
+		   font-size: 14px;
+	   }
+	</style>
 </head>
 <body>
-    
+   
+	<div class="box">
+		<div class="input_box">
+			<input type="text" v-model="int.content" placeholder="请输入内容" @keydown.enter="addFun">
+			<div class="send" @click="addFun">发送</div>
+		</div>
+
+		<div class="list_box">
+			<ul v-if="list.length">
+				<li class="clear" v-for="(itme,index) in list">
+				    <input type="checkbox" name="" id="" :checked="itme.finished" @click="seleCheck(index)">
+					<p :class="{active:itme.finished}">{{itme.content}}</p>
+					<div class="del" v-if="itme.finished" @click="delFun(index)">删除</div>
+				</li>
+			</ul>
+			<div class="hint_text" v-else>暂无数据</div>
+		</div>
+	</div>
+
+
+	<script src="https://cdn.bootcss.com/vue/2.0.0/vue.min.js"></script>
+	<script>
+	    var vm = new Vue({
+			el:'.box',
+			data:{
+                int:{
+					content:'',
+					finished:false,   //  是否完成
+                    deleted:false     // 是否删除
+				},
+				list:[]
+			},
+			methods:{
+                 addFun(){
+					 if(this.int.content == '' || this.int.content == null){
+                        return alert("请输入内容")
+					 } else {
+						this.list.push(this.int);
+						localStorage.setItem('localList',JSON.stringify(this.list));
+						this.int = {
+							content:'',
+							finished:false,
+							deleted:false
+						}
+					 }
+				 },
+				 seleCheck(index){
+                     this.list[index].finished = !this.list[index].finished;
+					 localStorage.localList= JSON.stringify(this.list);
+				 },
+				 delFun(index){
+                     this.list.splice(index,1);
+					 localStorage.localList = JSON.stringify(this.list);
+				 }
+			},
+			mounted(){
+				if(localStorage.length == 0 || localStorage.length == null){
+                     return false;
+				} else {
+					 this.list  = JSON.parse(localStorage.getItem('localList')); 
+				}
+			}
+		})
+	</script>
 </body>
 </html>
