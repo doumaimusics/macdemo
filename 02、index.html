@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <style lang=""></style>
+
+  <body>
+    <div id="app"></div>
+
+    <script src="https://cdn.bootcss.com/vue/2.5.15/vue.min.js"></script>
+    <script>
+
+        var myHeader = {
+            template:`
+                <div @click='clickFun'>{{text1}}</div>
+            `,
+            props:["text1"],
+            methods:{
+                clickFun(){
+                    alert("我是头部")
+                }
+            }
+        };
+
+        var myBody = {
+            template:`
+                 <div @click='clickFun'>{{text2}}</div>
+             `,
+             props:["text2"],
+             methods:{
+                 clickFun(){
+                     alert("我是中间")
+                 }
+             }
+        };
+
+        var myFooter = {
+            template:`
+                <div @click='clickFun'>{{text3}}</div>
+            `,
+            props:["text3"],
+            methods:{
+                clickFun(){
+                    alert("我是底部")
+                }
+            }
+
+        };
+
+        var app = {
+          data(){
+             return {
+                 text1:'我是父组件头部数据',
+                 text2:'我是父组件中间数据',
+                 text3:'我是父组件底部数据'
+             }
+          },
+          template:`
+               <div>
+                   <myHeader :text1 = "text1"></myHeader>
+                   <myBody :text2 = "text2"></myBody>
+                   <myFooter :text3 = "text3"></myFooter>
+               </div>
+          `,
+          components:{
+              myHeader,
+              myBody,
+              myFooter
+          }
+        };
+        var vm = new Vue({
+            el:'#app',
+            template:`<app></app>`,
+            components:{
+                app
+            }
+        })
+    </script>
+  </body>
+</html>

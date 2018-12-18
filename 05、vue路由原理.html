@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+    <!-- 1 -->
+    <script src="https://cdn.bootcss.com/vue/2.0.0/vue.min.js"></script>
+    <script src="https://cdn.bootcss.com/vue-router/2.0.0/vue-router.js"></script>
+    <!-- <script src="https://cdn.bootcss.com/vue-router/2.0.0/vue-router.min.js"></script> -->
+    <!-- 
+            创建viwe路由步骤：
+               1、引入vue插件  vue-router.js
+               2、安装插件
+                  Vue.use(Vue.router);
+               3、创建一个路由对象
+                  var router = new VueRouter({
+                      4、配置路由对象
+                      routes:[{
+                          path:/login,
+                          component:Login
+                      }]
+                  })
+
+               5、将配置好的路由对象关联到vue实例中
+               6、指定路由改变局部的位置   
+         -->
+    <script>
+        var Login = {
+            template: `<div>我是登录页</div>`,
+            created() {
+                console.log(this.$route.query)
+            },
+        };
+
+        var Register = {
+            data(){
+                return{
+                   paramss:''
+                }
+            },
+            template:`<div>我是注册页</div>`,
+            created() {
+                this.paramss = this.$route.params.name;
+                console.log(this.paramss);
+            },
+        };
+        
+        // 2
+        Vue.use(VueRouter);
+       
+        // 3
+        var router = new VueRouter({
+            // 4
+            routes:[
+                {name:'log',path:'/login',component: Login},
+                {name:'reg',path:'/register/:name',component:Register}
+            ]
+        })
+
+        
+       // 6
+        var App = {
+            template: `
+                    <div>
+                       <router-link :to = "{name:'log',query:{id:1}}">我是登录页面</router-link>	
+                       <router-link :to = "{name:'reg',params:{name:'abc'}}">我是注册页面</router-link>
+                       <router-view></router-view>
+                    </div>
+                `
+        };
+        // 5
+        var vm = new Vue({
+            el: '#app',
+            router:router, 
+            components: {
+                app:App
+            },  
+            template: `
+                   <app/>
+                `,
+        })
+    </script>
+
+</body>
+
+</html>

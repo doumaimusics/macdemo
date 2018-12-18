@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+    <!-- <script src="https://cdn.bootcss.com/vue/2.0.0/vue.min.js"></script>
+    <script src="https://cdn.bootcss.com/vue-router/2.0.0/vue-router.js"></script> -->
+    <script src="https://cdn.bootcss.com/vue/2.5.17/vue.min.js"></script>
+    <script src="https://cdn.bootcss.com/vue-router/2.5.1/vue-router.min.js"></script>
+    <script>
+        var isLogin = false;
+
+        var Login  = {
+            template:`<div>我是登录页面</div>`,
+            created() {
+                isLogin  = true;
+            },
+        };
+
+        var Music = {
+            template:`<div>我是音乐页面</div>`
+        };
+
+        Vue.use(VueRouter);
+        var router = new VueRouter(
+            // [
+            //     // {path:'/',redirect:{name:'log'}},   // 默认进来的路由
+            //     {name:'log',path:'/login',component:Login},
+            //     {name:'mus',path:'/music',component:Music,meta:{isChecked:true}}  // meta:{isChecked:true}给未来路由的权限控制全局路由 守卫在 做 参照条件
+            // ]
+        );   // 创建路由对象 
+        router.addRoutes([    // vue2.2.0版本新增加的特性，之前的用上面的方法这样些可以多次追加路由规则，动态的获取路由规则
+            {path:'/',redirect:{name:'log'}},   // 默认进来的路由
+            {name:'log',path:'/login',component:Login},
+            {name:'mus',path:'/music',component:Music,meta:{isChecked:true}}  // meta:{isChecked:true}给未来路由的权限控制全局路由 守卫在 做 参照条件
+        ]);
+
+        router.beforeEach((to,from,next) => {
+        //    next();
+           if(!to.meta.isChecked){
+              next();  // 回调函数不调用next就会卡住
+           } else {
+               // 判断是否需要登录
+               if(isLogin){
+                   next();
+               } else { 
+                   alert("请先登录");
+                   next({name:'log'});  // 重定向
+               }
+           }
+        });
+        
+
+        var App = {
+           template:`
+             <div>
+                <router-link :to="{name:'log'}">登录</router-link>
+                <router-link  :to="{name:'mus'}">去音乐</router-link>
+                <router-view></router-view>
+             </div>
+           `
+        };
+        var  vm  = new Vue({
+            el:'#app',
+            template:`<app/>`,
+            components:{
+                app:App
+            },
+            router:router
+        })
+    </script>
+</body>
+</html>

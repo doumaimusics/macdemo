@@ -1,0 +1,171 @@
+DOM操作：
+    在vue中操作DOM要在mounted中操作：
+    在template中标识元素ref = "xxx";
+    在要获取的时候this.$refs.xxx获取元素；
+    ref在DOM上获取的是原生DOM对象；
+    ref在组件上获取的是组件对象；
+    $el是拿其DOM，这个对象相当于我们平时玩的this，也可以直接调用函数
+
+    在mounted中，最终代码执行完毕以后，vue才会根据实际的值，进行DOM的操作
+    我们希望vue真正渲染DOM到页面以后，才做的事用以下方式：
+       this.$nextTick(() => {
+           This.$refs.元素.事件函数
+       })
+
+
+路由：
+   前端路由原理：
+        锚点值页面不跳转，加上innerHTML的替换；
+        <a href="#/login">点我登录</a>
+        <a href="#/register">点我注册</a>
+        <div id="content"></div>
+        var oDiv = document.getElementById('content');
+        window.addEventListener('hashchange',() =>{
+            switch(location.hash){
+                case '#/login':
+                    oDiv.innerHTML = "<h1>登录页面吧</h1>";
+                    break;
+                case '#/register':
+                    oDiv.innerHTML = "<h1>注册页面</h1>";
+                    break;
+            }
+        })
+   vue前端路由：
+    一、创建viwe路由步骤：
+               1、引入vue插件  vue-router.js
+               2、安装插件
+                  Vue.use(Vue.router);
+               3、创建一个路由对象
+                  var router = new VueRouter({
+                      4、配置路由对象
+                      routes:[{
+                          path:/login,
+                          component:Login
+                      }]
+                  })
+
+               5、将配置好的路由对象关联到vue实例中
+               6、指定路由改变局部的位置 
+        例子：
+            var Login = {
+                template: `<div>我是登录页</div>`
+            };
+            
+            // 2
+            Vue.use(VueRouter);    
+           
+            // 3
+            var router = new VueRouter({
+                // 4
+                routes:[{
+                    path:'/login',
+                    component: Login
+                }]
+            })
+
+            
+           // 6
+            var App = {
+                template: `
+                        <div>
+                           <router-view></router-view>
+                        </div>
+                    `
+            };
+            // 5
+            var vm = new Vue({
+                el: '#app',
+                router:router, 
+                components: {
+                    app:App
+                },  
+                template: `
+                       <app/>
+                    `,
+            })
+
+
+    二、  router-link
+          <router-link :to="{path:'路径'}" ></router-link>  
+          <router-link :to="{name:'路径名'}" ></router-link> 
+          参数router-link
+          Vue.prototype.xxx = {add:in}
+          所有组件中，使用this.xxx就能拿到这个对象
+          查询字符串：
+              1、配置  :to="{name:'detail',query:{id:1}}"
+              2、规则  {name:'detail',path:'/detail',component:Detail}
+              3、获取  this.$route.query.id
+              4、生成  <a href='/detail?id=1'></a>
+
+          path方式：哦
+              1、配置  :to="{name:'detail',params:{name:'abc'}}"
+              2、规则  {name:'detail',path:'/detail/:name'}
+              3、获取  this.$route.params.name
+              4、生成  <a href='/detail/1'></a>
+
+    三、命名路由：
+         1、给路由对象一个名字{name:"home",path:'/home',component:Home}
+         2、在router-link属性中描述这个规则:通过名称找路由对象，获取path，生成自己的href
+            <router-link :to="{name:'home'}"></router-link> 
+         3、优点降低维护成本，锚点值改变只用在main.js中改变path属性即可
+
+    总结：
+       vue-router使用步骤：
+           1、引入vue-router.js
+           2、安装插件
+           3、创建路由实例
+           4、配置路由规则
+           5、将路由对象关联vue
+           6、留坑
+       router-link  :to="xxx" 命名路由
+           1、在路由规则对象中加入name属性
+           2、在router-link中绑定对象 :to="{name:'名字'}" 
+
+
+      生僻API梳理：
+           1、 Vue.use(插件对象)； 过程中会注册一些全局组件，及给vm或者组件对象挂在属性；
+           2、给vm及组件对象挂在的方式：Object.defineProperty(Vue.prototype,'$router',{
+                  get:function(){
+                     return 自己的router对象；
+                  }
+              })
+
+      vue-router中的对象：
+           $route 路由信息对象，只读对象
+           $router 路由操作对象，只写对象
+
+    四、知识点 
+        路由meta元数据 > meta是对于路由规则是否需要验证权限的配置
+             1、路由对象中和name属性同级{meat:{isChecked:true}}
+        路由钩子 > 权限控的函数执行时期  
+             1、每次路由匹配，渲染组件到router-view之前
+             2、router.beforeEach(function(to,from,next){})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
